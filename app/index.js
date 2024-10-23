@@ -14,6 +14,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 // List of allowed custom Bearer tokens from .env
 const ALLOWED_TOKENS = process.env.ALLOWED_TOKENS ? process.env.ALLOWED_TOKENS.split(',') : [];
 
+
 // Middleware to parse different types of requests, including binary
 app.use(express.raw({ type: '*/*' }));
 

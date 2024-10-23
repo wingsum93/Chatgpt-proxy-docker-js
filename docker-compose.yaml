@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: chatgpt_proxy_app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ALLOWED_TOKENS=${ALLOWED_TOKENS}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/app
+    restart: always
+    command: sh -c "npm install && npm start"
+
+networks:
+  default:
+    driver: bridge
