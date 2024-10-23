@@ -3,15 +3,16 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
 
-// Replace this with your OpenAI API key
-const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY';
+// OpenAI API key from .env
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// List of allowed custom Bearer tokens
-const ALLOWED_TOKENS = ['YOUR_CUSTOM_TOKEN_1', 'YOUR_CUSTOM_TOKEN_2', 'YOUR_CUSTOM_TOKEN_3'];
+// List of allowed custom Bearer tokens from .env
+const ALLOWED_TOKENS = process.env.ALLOWED_TOKENS ? process.env.ALLOWED_TOKENS.split(',') : [];
 
 // Middleware to parse different types of requests, including binary
 app.use(express.raw({ type: '*/*' }));
