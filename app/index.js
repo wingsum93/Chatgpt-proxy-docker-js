@@ -22,7 +22,7 @@ const agent = new https.Agent({
 });
 
 // Middleware to parse different types of requests, including binary
-app.use(express.raw({ type: '*/*' }));
+app.use(express.raw({ type: '*/*', limit: '25mb' }));  // Set the limit accordingly based on your need
 
 // Middleware to check for custom Bear token
 app.use((req, res, next) => {
@@ -56,6 +56,9 @@ app.all('*', async (req, res) => {
       data: req.body,
       httpsAgent: agent  // Attach the custom agent
     });
+    // Set headers to forward the response back to the client
+    res.set(response.headers);
+    
     res.status(response.status).send(response.data);
     console.log('process status already:', response.code);
   } catch (error) {
