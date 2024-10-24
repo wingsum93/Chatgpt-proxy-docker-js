@@ -1,0 +1,15 @@
+services:
+  app:
+    image: dockerericho/chatgpt-proxy:latest
+    container_name: chatgpt_proxy_app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ALLOWED_TOKENS=${ALLOWED_TOKENS}
+    ports:
+      - "3000:3000"
+    restart: always
+    command: sh -c "npm install && npm start"
+
+networks:
+  default:
+    driver: bridge
