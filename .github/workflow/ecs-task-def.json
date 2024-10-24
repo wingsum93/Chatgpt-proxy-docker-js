@@ -1,0 +1,32 @@
+{
+    "family": "my-task-family",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "gpt-proxy-container",
+        "image": "<IMAGE_URI>", 
+        "essential": true,
+        "memory": 512,
+        "cpu": 256,
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "hostPort": 80,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "<YOUR_EXECUTION_ROLE_ARN>",
+    "taskRoleArn": "<YOUR_TASK_ROLE_ARN>",
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": ["<YOUR_SUBNET_ID>"],
+        "assignPublicIp": "ENABLED"
+      }
+    }
+  }
+  

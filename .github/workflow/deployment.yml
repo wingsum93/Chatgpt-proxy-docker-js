@@ -1,0 +1,44 @@
+name: Build and Deploy to AWS Fargate Spot
+
+on:
+  push:
+    branches:
+      - main  # Deploys when code is pushed to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Log in to AWS ECR
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t ${{ secrets.AWS_ECR_REPOSITORY }}:$IMAGE_TAG .
+          echo "::set-output name=image::$IMAGE_TAG"
+
+      # Push the Docker image to ECR
+      - name: Push Docker image to ECR
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker tag ${{ secrets.AWS_ECR_REPOSITORY }}:$IMAGE_TAG ${{ secrets.AWS_ECR_URI }}:${{ github.sha }}
+          docker push ${{ secrets.AWS_ECR_URI }}:${{ github.sha }}
+
+      # Deploy to ECS Fargate Spot
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ecs-task-def.json # Path to your ECS task definition JSON file
+          service: my-ecs-service            # Replace with your ECS service name
+          cluster: my-ecs-cluster            # Replace with your ECS cluster name
+          container-name: my-container       # Replace with your container name in the task definition
+          image: ${{ secrets.AWS_ECR_URI }}:${{ github.sha }}
