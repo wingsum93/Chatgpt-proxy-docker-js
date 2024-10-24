@@ -34,7 +34,7 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_TAG=${{ github.sha }}
-          docker build . -t ${{env.DOCKER_USERNAME}}/chatgpt-proxy:$IMAGE_TAG
+          docker build . -t ${{env.DOCKER_USERNAME}}/chatgpt-proxy:latest
           echo "::set-output name=image::$IMAGE_TAG"
       
       - name: Push the Docker Image to GitHub Container Registry
@@ -44,4 +44,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image to GitHub Container Registry
-        run: docker push ${{env.DOCKER_USERNAME}}/chatgpt-proxy:$IMAGE_TAG
+        run: docker push ${{env.DOCKER_USERNAME}}/chatgpt-proxy:latest
