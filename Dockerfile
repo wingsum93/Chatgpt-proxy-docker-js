@@ -1,10 +1,10 @@
 # Dockerfile to dockerize an API Proxy that redirects requests to OpenAI endpoint
 
 # Base image
-FROM node:16
+FROM node:22
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /gproxy
 
 # Copy the package.json and package-lock.json files
 COPY package*.json ./

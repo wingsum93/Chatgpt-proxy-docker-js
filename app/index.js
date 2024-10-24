@@ -2,6 +2,7 @@
 
 const express = require('express');
 const axios = require('axios');
+const https = require('https');
 const path = require('path');
 require('dotenv').config();
 
@@ -14,6 +15,11 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 // List of allowed custom Bearer tokens from .env
 const ALLOWED_TOKENS = process.env.ALLOWED_TOKENS ? process.env.ALLOWED_TOKENS.split(',') : [];
 
+// Create an agent that disables SSL verification
+console.log('create ssl agent');
+const agent = new https.Agent({  
+  rejectUnauthorized: false
+});
 
 // Middleware to parse different types of requests, including binary
 app.use(express.raw({ type: '*/*' }));
@@ -38,6 +44,7 @@ app.get('/', (req, res) => {
 
 // Proxy endpoint that redirects all incoming requests to the OpenAI endpoint
 app.all('*', async (req, res) => {
+  console.log('process status:', req.method, req.originalUrl);
   try {
     const response = await axios({
       method: req.method,
@@ -46,10 +53,11 @@ app.all('*', async (req, res) => {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
         ...req.headers,
       },
-      data: req.body
+      data: req.body,
+      httpsAgent: agent  // Attach the custom agent
     });
-
     res.status(response.status).send(response.data);
+    console.log('process status already:', response.code);
   } catch (error) {
     res.status(error.response ? error.response.status : 500).send(error.message);
   }
@@ -58,4 +66,6 @@ app.all('*', async (req, res) => {
 // Start the server
 app.listen(PORT, () => {
   console.log(`API Proxy running at http://localhost:${PORT}`);
+  console.log('ALLOWED_TOKENS:', ALLOWED_TOKENS);
+  console.log('OPENAI_API_KEY:', OPENAI_API_KEY);
 });
