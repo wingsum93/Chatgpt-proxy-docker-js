@@ -10,7 +10,7 @@ on:
       - release
 env:
   AWS_REGION: ap-northeast-1
-  DOCKER_USERNAME: ${{vars.DOCKER_USERNAME}}
+  DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -32,7 +32,7 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_TAG=${{ github.sha }}
-          docker build . -t $DOCKER_USERNAME/chatgpt-proxy:$IMAGE_TAG
+          docker build . -t ${{DOCKER_USERNAME}}/chatgpt-proxy:$IMAGE_TAG
           echo "::set-output name=image::$IMAGE_TAG"
       - name: Test secret
         run: echo "${{ env.DOCKER_USERNAME }}:${{ secrets.DOCKER_PASSWORD }} "
@@ -44,4 +44,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker Image to GitHub Container Registry
-        run: docker push $DOCKER_USERNAME/chatgpt-proxy:$IMAGE_TAG
+        run: docker push ${{env.DOCKER_USERNAME}}/chatgpt-proxy:$IMAGE_TAG
